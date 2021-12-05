@@ -1,23 +1,20 @@
 use crate::error;
 
 #[derive(Clone)]
-struct Number {
+pub struct Number {
     pub number: u64,
     pub selected: bool,
 }
 
 #[derive(Clone)]
-struct Board {
+pub struct Board {
     pub matrix: Vec<Number>,
 }
 
 impl Board {
-    fn from_numbers(numbers: Vec<u64>) -> Self {
+    pub fn from_numbers(numbers: Vec<u64>) -> Self {
         Board {
-            matrix: numbers.iter().map(|n| Number {
-                number: *n,
-                selected: false,
-            }).collect()
+            matrix: numbers.iter().map(|n| Number { number: *n, selected: false }).collect(),
         }
     }
 
@@ -72,7 +69,7 @@ impl Board {
         false
     }
 
-    fn sum_unmarked(&self) -> u64 {
+    pub fn sum_unmarked(&self) -> u64 {
         self.matrix.iter().filter(|n| !n.selected).map(|n| n.number).sum()
     }
 
@@ -80,9 +77,7 @@ impl Board {
         for y in 0..=4u64 {
             for x in 0..=4u64 {
                 let n = self.at(x, y);
-                print!("{:4 }{}",
-                       n.number,
-                       if n.selected { "X" } else { "-" });
+                print!("{:4 }{}", n.number, if n.selected { "X" } else { "-" });
             }
             println!();
         }
@@ -90,27 +85,27 @@ impl Board {
     }
 }
 
-struct Bingo {
+pub struct Bingo {
     pub drawn_numbers: Vec<u64>,
     pub boards: Vec<Board>,
 }
 
-struct Winner {
-    board: Board,
+pub struct Winner {
+    pub board: Board,
     pub winning_number: u64,
 }
 
 impl Winner {
-    fn score(&self) -> u64 {
+    pub fn score(&self) -> u64 {
         self.winning_number * self.board.sum_unmarked()
     }
 }
 
-struct BingoResult {
-    winners: Vec<Winner>,
+pub struct BingoResult {
+    pub winners: Vec<Winner>,
 }
 
-fn play_bingo(mut bingo: Bingo) -> BingoResult {
+pub fn play_bingo(mut bingo: Bingo) -> BingoResult {
     let mut winners: Vec<Winner> = Vec::with_capacity(bingo.boards.len());
     for drawn_number in bingo.drawn_numbers {
         for board in &mut bingo.boards {
@@ -118,19 +113,15 @@ fn play_bingo(mut bingo: Bingo) -> BingoResult {
                 board.mark(drawn_number);
 
                 if board.is_bingo() {
-                    winners.push(
-                        Winner {
-                            board: board.clone(),
-                            winning_number: drawn_number,
-                        }
-                    );
+                    winners.push(Winner {
+                        board: board.clone(),
+                        winning_number: drawn_number,
+                    });
                 }
             }
         }
     }
-    BingoResult {
-        winners
-    }
+    BingoResult { winners }
 }
 
 fn parse_drawn_numbers(line: &str) -> Result<Vec<u64>, error::Error> {
@@ -138,7 +129,7 @@ fn parse_drawn_numbers(line: &str) -> Result<Vec<u64>, error::Error> {
     Ok(result?)
 }
 
-fn parse_bingo(input: &str) -> Result<Bingo, error::Error> {
+pub fn parse_bingo(input: &str) -> Result<Bingo, error::Error> {
     let mut line_iterator = input.lines().filter(|l| !l.trim_start().trim_end().is_empty());
     let mut bingo = Bingo {
         drawn_numbers: parse_drawn_numbers(line_iterator.next().unwrap())?,
@@ -147,10 +138,7 @@ fn parse_bingo(input: &str) -> Result<Bingo, error::Error> {
     for board_lines in line_iterator.collect::<Vec<&str>>().chunks(5) {
         let mut matrix: Vec<u64> = Vec::with_capacity(5 * 5);
         for board_line in board_lines {
-            let numbers: Result<Vec<u64>, _> = board_line
-                .split(' ')
-                .filter(|token| !token.trim_start().trim_end().is_empty())
-                .map(|token| token.parse()).collect();
+            let numbers: Result<Vec<u64>, _> = board_line.split(' ').filter(|token| !token.trim_start().trim_end().is_empty()).map(|token| token.parse()).collect();
             matrix.append(&mut numbers?);
         }
         let board = Board::from_numbers(matrix);

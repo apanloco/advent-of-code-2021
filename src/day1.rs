@@ -1,6 +1,6 @@
 use crate::error;
 
-fn load_input(path: &str) -> Result<Vec<u64>, error::Error> {
+pub fn load_input(path: &str) -> Result<Vec<u64>, error::Error> {
     let data = std::fs::read_to_string(path)?;
     let lines: Vec<&str> = data.lines().collect();
     let mut values = Vec::with_capacity(lines.len());
@@ -10,7 +10,7 @@ fn load_input(path: &str) -> Result<Vec<u64>, error::Error> {
     Ok(values)
 }
 
-fn num_increased_measurements(input: &Vec<u64>) -> u64 {
+pub fn num_increased_measurements(input: &Vec<u64>) -> u64 {
     let mut last: Option<u64> = None;
     let mut num_increased = 0;
     for value in input {
@@ -24,7 +24,7 @@ fn num_increased_measurements(input: &Vec<u64>) -> u64 {
     num_increased
 }
 
-fn num_increased_measurements_window(input: &Vec<u64>) -> u64 {
+pub fn num_increased_measurements_window(input: &Vec<u64>) -> u64 {
     let mut last: Option<u64> = None;
     let mut num_increased = 0;
 

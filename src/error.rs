@@ -17,5 +17,7 @@ impl From<std::num::ParseFloatError> for Error {
 }
 
 impl From<std::io::Error> for Error {
-    fn from(e: std::io::Error) -> Self { Error::Io(e.to_string()) }
+    fn from(e: std::io::Error) -> Self {
+        Error::Io(e.to_string())
+    }
 }

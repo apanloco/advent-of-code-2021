@@ -1,9 +1,9 @@
 use crate::error;
 
-struct NavigationResult {
+pub struct NavigationResult {
     horizontal_position: u64,
     depth: u64,
-    aim: u64,
+    pub aim: u64,
 }
 
 impl NavigationResult {
@@ -13,7 +13,7 @@ impl NavigationResult {
 }
 
 #[derive(PartialEq, Debug)]
-enum Command {
+pub enum Command {
     Forward(u64),
     Up(u64),
     Down(u64),
@@ -32,12 +32,12 @@ impl std::str::FromStr for Command {
             "forward" => Ok(Command::Forward(number)),
             "up" => Ok(Command::Up(number)),
             "down" => Ok(Command::Down(number)),
-            _ => { Err(error::Error::Parse(format!("invalid command: {}", s))) }
+            _ => Err(error::Error::Parse(format!("invalid command: {}", s))),
         }
     }
 }
 
-fn parse_commands(s: &str) -> Result<Vec<Command>, error::Error> {
+pub fn parse_commands(s: &str) -> Result<Vec<Command>, error::Error> {
     let mut commands: Vec<Command> = Vec::new();
     for line in s.lines() {
         let line = line.trim_end().trim_start();
@@ -49,7 +49,7 @@ fn parse_commands(s: &str) -> Result<Vec<Command>, error::Error> {
     Ok(commands)
 }
 
-fn navigate(commands: &Vec<Command>) -> NavigationResult {
+pub fn navigate(commands: &Vec<Command>) -> NavigationResult {
     let mut res = NavigationResult {
         horizontal_position: 0,
         depth: 0,
@@ -58,16 +58,16 @@ fn navigate(commands: &Vec<Command>) -> NavigationResult {
 
     for command in commands {
         match command {
-            Command::Forward(v) => { res.horizontal_position += v }
-            Command::Up(v) => { res.depth -= v }
-            Command::Down(v) => { res.depth += v }
+            Command::Forward(v) => res.horizontal_position += v,
+            Command::Up(v) => res.depth -= v,
+            Command::Down(v) => res.depth += v,
         }
     }
 
     res
 }
 
-fn navigate_aim(commands: &Vec<Command>) -> NavigationResult {
+pub fn navigate_aim(commands: &Vec<Command>) -> NavigationResult {
     let mut res = NavigationResult {
         horizontal_position: 0,
         depth: 0,
@@ -80,8 +80,8 @@ fn navigate_aim(commands: &Vec<Command>) -> NavigationResult {
                 res.horizontal_position += v;
                 res.depth += res.aim * v
             }
-            Command::Up(v) => { res.aim -= v }
-            Command::Down(v) => { res.aim += v }
+            Command::Up(v) => res.aim -= v,
+            Command::Down(v) => res.aim += v,
         }
     }
 

@@ -1,5 +1,4 @@
-
-fn count_01(nums: &Vec<String>, index: usize) -> (u64, u64) {
+pub fn count_01(nums: &Vec<String>, index: usize) -> (u64, u64) {
     let mut count_0s: u64 = 0;
     let mut count_1s: u64 = 0;
 
@@ -7,51 +6,50 @@ fn count_01(nums: &Vec<String>, index: usize) -> (u64, u64) {
         match number.chars().nth(index).unwrap() {
             '0' => count_0s += 1,
             '1' => count_1s += 1,
-            _ => { panic!("bug"); }
+            _ => {
+                panic!("bug");
+            }
         }
     }
 
     (count_0s, count_1s)
 }
 
-struct PowerConsumption {
+pub struct PowerConsumption {
     gamma_rate: u64,
     epsilon_rate: u64,
 }
 
 impl PowerConsumption {
-    fn sum(&self) -> u64 {
+    pub fn sum(&self) -> u64 {
         self.gamma_rate * self.epsilon_rate
     }
 }
 
-struct LifeSupport {
+pub struct LifeSupport {
     oxygen: u64,
     co2: u64,
 }
 
 impl LifeSupport {
-    fn sum(&self) -> u64 {
+    pub fn sum(&self) -> u64 {
         self.oxygen * self.co2
     }
 }
 
-fn calculate_power_consumption(numbers: &Vec<String>) -> PowerConsumption {
+pub fn calculate_power_consumption(numbers: &Vec<String>) -> PowerConsumption {
     if numbers.is_empty() {
         panic!("no numbers");
     }
 
-    let mut pc = PowerConsumption {
-        gamma_rate: 0,
-        epsilon_rate: 0,
-    };
+    let mut pc = PowerConsumption { gamma_rate: 0, epsilon_rate: 0 };
 
     let mut gamma = String::new();
     let mut epsilon = String::new();
 
     let mut index = 0;
     while index < numbers[0].len() {
-        let (count_0s, count_1s) = count_01(&numbers, index);
+        let (count_0s, count_1s) = count_01(numbers, index);
 
         if count_0s == count_1s {
             panic!("bad algo");
@@ -74,47 +72,32 @@ fn calculate_power_consumption(numbers: &Vec<String>) -> PowerConsumption {
     pc
 }
 
-fn calculate_life_support(numbers: &Vec<String>) -> LifeSupport {
+pub fn calculate_life_support(numbers: &Vec<String>) -> LifeSupport {
     if numbers.is_empty() {
         panic!("no numbers");
     }
 
-    let mut ls = LifeSupport {
-        oxygen: 0,
-        co2: 0,
-    };
+    let mut ls = LifeSupport { oxygen: 0, co2: 0 };
 
-    let mut oxygen_nums = numbers.clone();
-    let mut co2_nums = numbers.clone();
+    let mut oxygen_nums = numbers.to_owned();
+    let mut co2_nums = numbers.to_owned();
 
     let mut index = 0;
     while index < numbers[0].len() {
         if oxygen_nums.len() > 1 {
             let (count_0s_oxygen, count_1s_oxygen) = count_01(&oxygen_nums, index);
 
-            let keep_oxygen = if count_1s_oxygen >= count_0s_oxygen {
-                '1'
-            } else {
-                '0'
-            };
+            let keep_oxygen = if count_1s_oxygen >= count_0s_oxygen { '1' } else { '0' };
 
-            oxygen_nums.retain(|num| {
-                num.chars().nth(index).unwrap() == keep_oxygen
-            });
+            oxygen_nums.retain(|num| num.chars().nth(index).unwrap() == keep_oxygen);
         }
 
         if co2_nums.len() > 1 {
             let (count_0s_co2, count_1s_co2) = count_01(&co2_nums, index);
 
-            let keep_co2 = if count_0s_co2 <= count_1s_co2 {
-                '0'
-            } else {
-                '1'
-            };
+            let keep_co2 = if count_0s_co2 <= count_1s_co2 { '0' } else { '1' };
 
-            co2_nums.retain(|num| {
-                num.chars().nth(index).unwrap() == keep_co2
-            });
+            co2_nums.retain(|num| num.chars().nth(index).unwrap() == keep_co2);
         }
 
         if oxygen_nums.len() == 1 && co2_nums.len() == 1 {
