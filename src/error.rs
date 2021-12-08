@@ -1,5 +1,6 @@
 #[derive(Debug, PartialEq)]
 pub enum Error {
+    General(String),
     Parse(String),
     Io(String),
 }
