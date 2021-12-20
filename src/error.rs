@@ -22,3 +22,9 @@ impl From<std::io::Error> for Error {
         Error::Io(e.to_string())
     }
 }
+
+impl From<scan_fmt::parse::ScanError> for Error {
+    fn from(e: scan_fmt::parse::ScanError) -> Self {
+        Error::Parse(e.to_string())
+    }
+}
