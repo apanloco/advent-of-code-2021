@@ -38,7 +38,7 @@ pub struct Transmission {
 
 #[derive(Debug)]
 pub struct Packet {
-    version: usize,
+    pub version: usize,
     type_id: TypeId,
     value: usize,
     num_sub_packet_bits: usize,

@@ -5,6 +5,12 @@ pub enum Error {
     Io(String),
 }
 
+impl From<std::string::FromUtf8Error> for Error {
+    fn from(e: std::string::FromUtf8Error) -> Self {
+        Error::Parse(e.to_string())
+    }
+}
+
 impl From<std::num::ParseIntError> for Error {
     fn from(e: std::num::ParseIntError) -> Self {
         Error::Parse(e.to_string())

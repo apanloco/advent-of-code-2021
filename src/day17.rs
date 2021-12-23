@@ -26,7 +26,7 @@ impl std::str::FromStr for TargetArea {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.trim_start().trim_end();
-        let (x_begin, x_end, y_begin, y_end) = scan_fmt!(s, "target area: x={d}..{d}, y={d}..{d}", i64, i64, i64, i64)?;
+        let (x_begin, x_end, y_begin, y_end) = scan_fmt::scan_fmt!(s, "target area: x={d}..{d}, y={d}..{d}", i64, i64, i64, i64)?;
         Ok(Self {
             x_begin: std::cmp::min(x_begin, x_end),
             x_end: std::cmp::max(x_begin, x_end),
