@@ -9,6 +9,7 @@ dependencies = [
  "itertools",
  "pathfinding",
  "permutator",
+ "petgraph",
  "scan_fmt",
 ]
 
@@ -177,6 +178,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa5132833890643cdaeb330ae7cf7da92e0e11c8729f6f529140666213876a0b"
 dependencies = [
  "num",
+]
+
+[[package]]
+name = "petgraph"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a13a2fa9d0b63e5f22328828741e523766fff0ee9e779316902290dff3f824f"
+dependencies = [
+ "fixedbitset",
+ "indexmap",
 ]
 
 [[package]]

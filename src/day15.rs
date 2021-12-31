@@ -41,8 +41,9 @@ impl Board {
             |&(x, y)| vec![(x, y - 1), (x + 1, y), (x, y + 1), (x - 1, y)].into_iter().map(|p| (p, cost_to(p.0, p.1))),
             |&(x, y)| (height() - y) + (width() - x),
             |&p| p.0 == width() - 1 && p.1 == height() - 1,
-        ).unwrap().1
-
+        )
+        .unwrap()
+        .1
     }
 
     pub fn lowest_total_risk_quintupled(&self) -> i32 {
@@ -84,8 +85,9 @@ impl Board {
             |&(x, y)| vec![(x, y - 1), (x + 1, y), (x, y + 1), (x - 1, y)].into_iter().map(|p| (p, cost_to(p.0, p.1))),
             |&(x, y)| (height() - y) + (width() - x),
             |&p| p.0 == width() - 1 && p.1 == height() - 1,
-        ).unwrap().1
-
+        )
+        .unwrap()
+        .1
     }
 }
 

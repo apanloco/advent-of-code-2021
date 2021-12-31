@@ -1,10 +1,9 @@
-
 use crate::error;
 
+use permutator::copy::{Combination, Permutation};
 use std::cell::RefCell;
 use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
-use permutator::copy::{Combination, Permutation};
 
 #[derive(PartialEq, Debug, Clone)]
 pub enum Element {
@@ -37,26 +36,24 @@ impl std::fmt::Display for Element {
 
 impl Element {
     pub fn new(s: &str) -> Result<Rc<RefCell<Element>>, error::Error> {
-        let pairs = s.trim_start().trim_end()
-            .lines()
-            .map(|line| {
-                let tokens = Element::tokenize(line).unwrap();
-                let mut iterator = tokens.iter();
+        let pairs = s.trim_start().trim_end().lines().map(|line| {
+            let tokens = Element::tokenize(line).unwrap();
+            let mut iterator = tokens.iter();
 
-                let lb = iterator.next().unwrap();
-                if lb != &Token::LeftBracket {
-                    panic!("expected left bracket");
-                }
+            let lb = iterator.next().unwrap();
+            if lb != &Token::LeftBracket {
+                panic!("expected left bracket");
+            }
 
-                let pair = Element::parse_pair(&mut iterator).unwrap();
+            let pair = Element::parse_pair(&mut iterator).unwrap();
 
-                let rb = iterator.next().unwrap();
-                if rb != &Token::RightBracket {
-                    panic!("expected right bracket");
-                }
+            let rb = iterator.next().unwrap();
+            if rb != &Token::RightBracket {
+                panic!("expected right bracket");
+            }
 
-                pair
-            });
+            pair
+        });
 
         let mut sum: Option<Rc<RefCell<Element>>> = None;
         for pair in pairs {
@@ -78,8 +75,9 @@ impl Element {
     }
 
     pub fn traverse<F>(element: Rc<RefCell<Element>>, depth: usize, f: &mut F)
-        where
-            F: FnMut(Rc<RefCell<Element>>, usize) {
+    where
+        F: FnMut(Rc<RefCell<Element>>, usize),
+    {
         f(element.clone(), depth + 1);
         match element.borrow().deref() {
             Element::Pair(x, y) => {
@@ -127,7 +125,6 @@ impl Element {
             }
 
             if depth >= 5 && ref_explode.is_none() {
-
                 if let Element::Pair(x, y) = element.borrow().deref() {
                     if let Element::Number(n1) = x.borrow().deref() {
                         left_number = Some(*n1);
@@ -153,7 +150,6 @@ impl Element {
                 skip_some -= 1;
             }
         });
-
 
         if ref_explode.is_none() {
             return false;
@@ -211,7 +207,7 @@ impl Element {
         Ok(tokens)
     }
 
-    fn parse_element<'a>(tokens: &mut impl Iterator<Item=&'a Token>) -> Result<Element, error::Error> {
+    fn parse_element<'a>(tokens: &mut impl Iterator<Item = &'a Token>) -> Result<Element, error::Error> {
         let token = tokens.next().unwrap();
 
         let element = match token {
@@ -225,14 +221,14 @@ impl Element {
 
                 pair
             }
-            Token::Number(n) => { Element::Number(n.to_owned()) }
-            _ => return Err(error::Error::Parse(format!("invalid token for x: {:?}", token)))
+            Token::Number(n) => Element::Number(n.to_owned()),
+            _ => return Err(error::Error::Parse(format!("invalid token for x: {:?}", token))),
         };
 
         Ok(element)
     }
 
-    fn parse_pair<'a>(tokens: &mut impl Iterator<Item=&'a Token>) -> Result<Element, error::Error> {
+    fn parse_pair<'a>(tokens: &mut impl Iterator<Item = &'a Token>) -> Result<Element, error::Error> {
         let x = Element::parse_element(tokens)?;
 
         let token = tokens.next().unwrap();
@@ -248,10 +244,8 @@ impl Element {
 
     pub fn magnitude_recursive(element: &Element) -> i64 {
         match element {
-            Element::Pair(x, y) => {
-                3 * Element::magnitude(&x.borrow()) + 2 * Element::magnitude(&y.borrow())
-            }
-            Element::Number(n) => { *n }
+            Element::Pair(x, y) => 3 * Element::magnitude(&x.borrow()) + 2 * Element::magnitude(&y.borrow()),
+            Element::Number(n) => *n,
         }
     }
 
@@ -261,7 +255,7 @@ impl Element {
 }
 
 impl std::iter::Sum for Element {
-    fn sum<I: Iterator<Item=Self>>(iter: I) -> Self {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
         iter.reduce(|acc, elem| Element::Pair(Rc::new(RefCell::new(acc)), Rc::new(RefCell::new(elem)))).unwrap()
     }
 }
@@ -386,31 +380,38 @@ fn test_explode() -> Result<(), error::Error> {
 
 #[test]
 fn test_day18() -> Result<(), error::Error> {
-    let pair = Element::new(r#"
+    let pair = Element::new(
+        r#"
 [1,1]
 [2,2]
 [3,3]
-[4,4]"#)?;
+[4,4]"#,
+    )?;
     assert_eq!(pair.borrow().to_string(), "[[[[1,1],[2,2]],[3,3]],[4,4]]");
 
-    let pair = Element::new(r#"
+    let pair = Element::new(
+        r#"
 [1,1]
 [2,2]
 [3,3]
 [4,4]
-[5,5]"#)?;
+[5,5]"#,
+    )?;
     assert_eq!(pair.borrow().to_string(), "[[[[3,0],[5,3]],[4,4]],[5,5]]");
 
-    let pair = Element::new(r#"
+    let pair = Element::new(
+        r#"
 [1,1]
 [2,2]
 [3,3]
 [4,4]
 [5,5]
-[6,6]"#)?;
+[6,6]"#,
+    )?;
     assert_eq!(pair.borrow().to_string(), "[[[[5,0],[7,4]],[5,5]],[6,6]]");
 
-    let pair = Element::new(r#"
+    let pair = Element::new(
+        r#"
 [[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]
 [7,[[[3,7],[4,3]],[[6,3],[8,8]]]]
 [[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]
@@ -420,10 +421,12 @@ fn test_day18() -> Result<(), error::Error> {
 [2,9]
 [1,[[[9,3],9],[[9,0],[0,7]]]]
 [[[5,[7,4]],7],1]
-[[[[4,2],2],6],[8,7]]"#)?;
+[[[[4,2],2],6],[8,7]]"#,
+    )?;
     assert_eq!(pair.borrow().to_string(), "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]");
 
-    let pair = Element::new(r#"
+    let pair = Element::new(
+        r#"
 [[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
 [[[5,[2,8]],4],[5,[[9,9],0]]]
 [6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
@@ -433,7 +436,8 @@ fn test_day18() -> Result<(), error::Error> {
 [[[[5,4],[7,7]],8],[[8,3],8]]
 [[9,3],[[9,9],[6,[4,9]]]]
 [[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
-[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]"#)?;
+[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]"#,
+    )?;
     assert_eq!(pair.borrow().to_string(), "[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]");
 
     let pair = Element::new(&std::fs::read_to_string("input_day18")?)?;
@@ -444,7 +448,6 @@ fn test_day18() -> Result<(), error::Error> {
 
 #[test]
 fn test_day18_part2() -> Result<(), error::Error> {
-
     let s = r#"
 [[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
 [[[5,[2,8]],4],[5,[[9,9],0]]]
